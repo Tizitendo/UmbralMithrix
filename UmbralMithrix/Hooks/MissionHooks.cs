@@ -1,6 +1,9 @@
 using EntityStates;
 using EntityStates.BrotherMonster;
 using EntityStates.Missions.BrotherEncounter;
+using MiscFixes.Modules;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -17,6 +20,68 @@ namespace UmbralMithrix
             On.EntityStates.Missions.BrotherEncounter.Phase3.OnEnter += Phase3OnEnter;
             On.EntityStates.Missions.BrotherEncounter.Phase4.OnEnter += Phase4OnEnter;
             On.EntityStates.Missions.BrotherEncounter.BossDeath.OnEnter += BossDeathOnEnter;
+
+            //skybox child is gone, so nullchecking it
+            IL.EntityStates.Missions.BrotherEncounter.BrotherEncounterPhaseBaseState.UpdateSkyboxColor += NullcheckSkybox;
+            IL.EntityStates.Missions.BrotherEncounter.BossDeath.OnEnter += SkipSkyBoxCheck;
+        }
+
+        private static void NullcheckSkybox(ILContext il)
+        {
+            ILCursor c = new(il);
+            ILLabel afterIfBlock = null;
+            int nullcheckChildLoc = 0;
+
+            if (!c.TryGotoNext(MoveType.After,
+                x => x.MatchLdstr("SkyboxReplacement"),
+                x => x.MatchCallOrCallvirt(typeof(ChildLocator), nameof(ChildLocator.FindChild)),
+                x => x.MatchStloc(out nullcheckChildLoc)
+            ))
+            {
+                Log.Error(il.Method.Name + " Failed to find patch location");
+            }
+
+            ILLabel nullcheckPos = c.MarkLabel();
+
+            if (!c.TryGotoNext(MoveType.After,
+                x => x.MatchBrfalse(out afterIfBlock)
+            ))
+            {
+                Log.Error(il.Method.Name + " Failed to find patch location");
+            }
+
+            c.GotoLabel(nullcheckPos);
+            c.Emit(OpCodes.Ldloc, nullcheckChildLoc);
+            c.EmitOpImplicit();
+            c.Emit(OpCodes.Brfalse, afterIfBlock);
+        }
+
+        private static void SkipSkyBoxCheck(ILContext il)
+        {
+            ILCursor c = new(il);
+
+            if (!c.TryGotoNext(MoveType.Before,
+                x => x.MatchLdarg(out _),
+                x => x.MatchLdfld(typeof(BrotherEncounterBaseState), nameof(BrotherEncounterBaseState.childLocator)),
+                x => x.MatchLdstr("SkyboxReplacement")
+            ))
+            {
+                Log.Error(il.Method.Name + " Failed to find patch location");
+            }
+
+            ILLabel skipStartPos = c.MarkLabel();
+
+            if (!c.TryGotoNext(MoveType.After,
+                x => x.MatchCallOrCallvirt(typeof(GameObject), nameof(GameObject.SetActive))
+            ))
+            {
+                Log.Error(il.Method.Name + " Failed to find patch location");
+            }
+
+            ILLabel skipEndPos = c.MarkLabel();
+            c.GotoLabel(skipStartPos);
+
+            c.Emit(OpCodes.Br, skipEndPos);
         }
 
         private void Phase1OnEnter(On.EntityStates.Missions.BrotherEncounter.Phase1.orig_OnEnter orig, Phase1 self)

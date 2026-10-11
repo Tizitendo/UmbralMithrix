@@ -5,6 +5,7 @@ using EntityStates.BrotherMonster;
 using HG;
 using KinematicCharacterController;
 using R2API;
+using R2API.Utils;
 using Rewired.ComponentControls.Effects;
 using RoR2;
 using RoR2.CharacterAI;
@@ -14,10 +15,12 @@ using RoR2.Skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UmbralMithrix.Components;
 using UmbralMithrix.EntityStates;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Events;
 using UnityEngine.Networking;
 
 namespace UmbralMithrix
@@ -26,6 +29,7 @@ namespace UmbralMithrix
     [BepInDependency(R2API.ContentManagement.R2APIContentManager.PluginGUID)]
     [BepInDependency(R2API.PrefabAPI.PluginGUID)]
     [BepInDependency(R2API.LanguageAPI.PluginGUID)]
+    [BepInDependency(MiscFixes.MiscFixesPlugin.PluginGUID)]
     [BepInDependency(RiskOfOptions.PluginInfo.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInIncompatibility("com.Blobface.ArtifactKing")]
     [BepInIncompatibility("com.RiskyLives.RiskyMithrix")]
@@ -34,7 +38,7 @@ namespace UmbralMithrix
         public const string PluginGUID = "com." + PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Nuxlar";
         public const string PluginName = "UmbralMithrix";
-        public const string PluginVersion = "2.5.21";
+        public const string PluginVersion = "2.5.22";
 
         internal static UmbralMithrix Instance { get; private set; }
 
@@ -343,6 +347,8 @@ namespace UmbralMithrix
                     }
                 }
 
+                
+
                 characterBody.baseNameToken = "UMBRALMITHRIX_UMBRAL_BODY_NAME";
                 characterBody.subtitleNameToken = "UMBRALMITHRIX_UMBRAL_BODY_SUBTITLE";
 
@@ -379,6 +385,18 @@ namespace UmbralMithrix
             AssetAsyncReferenceManager<GameObject>.LoadAsset(masterP3Ref).Completed += (x) =>
             {
                 GameObject result = x.Result;
+
+                foreach(AISkillDriver skill in result.GetComponents<AISkillDriver>())
+                {
+                    if (skill.customName == "HealBeam")
+                    {
+                        foreach(KarmaEvent karma in result.GetComponents<KarmaEvent>())
+                        {
+                            RemoveListener(karma.unityEvent, skill, typeof(AISkillDriver).GetPropertySetter(nameof(AISkillDriver.enabled)));
+                        }
+                    }
+                }
+
                 mithrixHurtP3Master = PrefabAPI.InstantiateClone(result, "BrotherHurtMasterP3");
                 mithrixHurtP3Master.GetComponent<CharacterMaster>().bodyPrefab = mithrixHurtP3;
 
@@ -791,6 +809,19 @@ namespace UmbralMithrix
                 SkillDef fireLunarShardsDef = x.Result;
                 fireLunarShardsDef.baseMaxStock = 6;
             };
+        }
+
+        static void RemoveListener(UnityEvent uEvent, object targetObj, MethodInfo method)
+        {
+            List<PersistentCall> calls = uEvent.m_PersistentCalls.m_Calls;
+            for (int i = 0; i < calls.Count; i++)
+            {
+                if (calls[i].target == targetObj && calls[i].methodName == method.Name)
+                {
+                    calls.RemoveAt(i);
+                    break;
+                }
+            }
         }
     }
 }

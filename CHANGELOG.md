@@ -1,3 +1,7 @@
+`2.5.22`
+
+- Updated for Hallowed Concepts update
+
 `2.5.21`
 
 - Fixes Phase 4 being able to use temporary items

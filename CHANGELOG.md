@@ -1,5 +1,13 @@
 `2.5.22`
 
+- Fixed with updated ror2bepinexpack version
+- Removed golems from phase 4
+- Option (default: enabled): enable karma 3 swipe shards
+- Option (default: enabled): enable karma 3 slam lasers
+- Option (default: enabled): enable karma 8 health boost 
+
+`2.5.22`
+
 - Updated for Hallowed Concepts update
 
 `2.5.21`

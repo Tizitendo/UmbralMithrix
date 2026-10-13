@@ -10,6 +10,10 @@ public class UmbralBash : BasicMeleeAttack
 {
     public static float durationBeforePriorityReduces = 0.5f;
 
+    private bool hasFiredWaves;
+    private CharacterBody attackerBody;
+	private GameObject attackerObject;
+
     public override void PlayAnimation()
     {
         this.PlayCrossfade("FullBody Override", nameof(SprintBash), "SprintBash.playbackRate", this.duration, 0.05f);
@@ -17,6 +21,8 @@ public class UmbralBash : BasicMeleeAttack
 
     public override void OnEnter()
     {
+        attackerBody = BrotherKarmaUtils.GetBodyResponsibleForDamage(base.characterBody);
+		attackerObject = attackerBody.gameObject;
         baseDuration = 4f;
         damageCoefficient = 2f;
         hitBoxGroupName = "Weapon";
@@ -70,6 +76,28 @@ public class UmbralBash : BasicMeleeAttack
             return;
         this.skillLocator.utility.ExecuteIfReady();
     }
+
+    public override void AuthorityFireAttack()
+	{
+		base.AuthorityFireAttack();
+		if (KarmaManager.instance.GetEffectiveKarma() >= 3 && BrotherKarmaUtils.IsBrotherStrict(attackerBody) && !hasFiredWaves && ModConfig.KarmaSwipeShards.Value)
+		{
+			Transform transform = FindModelChild(SprintBash.muzzleString);
+			float num = SprintBash.waveProjectileArc / (float)SprintBash.waveProjectileCount;
+			Vector3 vector = Vector3.ProjectOnPlane(base.characterDirection.forward, Vector3.up);
+			Vector3 vector2 = base.characterBody.footPosition;
+			if ((bool)transform)
+			{
+				vector2 = transform.position;
+			}
+			for (int i = 0; i < SprintBash.waveProjectileCount; i++)
+			{
+				Vector3 vector3 = Quaternion.AngleAxis(num * ((float)i - (float)SprintBash.waveProjectileCount / 2f), Vector3.up) * vector;
+				ProjectileManager.instance.FireProjectileWithoutDamageType(SprintBash.waveProjectilePrefab, vector2 + vector3 * SprintBash.waveProjectileOffset, Util.QuaternionSafeLookRotation(vector3), attackerObject, attackerBody.damage * SprintBash.waveProjectileDamageCoefficient, SprintBash.waveProjectileForce, Util.CheckRoll(attackerBody.crit, attackerBody.master));
+			}
+			hasFiredWaves = true;
+		}
+	}
 
     public override void OnExit()
     {

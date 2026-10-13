@@ -1,5 +1,6 @@
 ﻿using System;
 using EntityStates;
+using EntityStates.BrotherMonster;
 using RoR2;
 using RoR2.Projectile;
 using UnityEngine;
@@ -34,10 +35,14 @@ namespace UmbralMithrix.EntityStates
         private Animator modelAnimator;
         private Transform modelTransform;
         private bool hasDoneBlastAttack;
+        private CharacterBody attackerBody;
+	    private GameObject attackerObject;
 
         public override void OnEnter()
         {
             base.OnEnter();
+            attackerBody = BrotherKarmaUtils.GetBodyResponsibleForDamage(base.characterBody);
+		    attackerObject = attackerBody.gameObject;
             this.modelAnimator = base.GetModelAnimator();
             this.modelTransform = base.GetModelTransform();
             Util.PlayAttackSpeedSound(UmbralHammerSlam.attackSoundString, base.gameObject, this.attackSpeedStat);
@@ -148,6 +153,14 @@ namespace UmbralMithrix.EntityStates
                             }
                             ProjectileManager.instance.FireProjectileWithoutDamageType(UmbralHammerSlam.pillarProjectilePrefab, vector2, Quaternion.identity, base.gameObject, base.characterBody.damage * UmbralHammerSlam.pillarDamageCoefficient, 0f, Util.CheckRoll(base.characterBody.crit, base.characterBody.master), DamageColorIndex.Default, null, -1f);
                         }
+                        if (KarmaManager.instance.GetEffectiveKarma() >= WeaponSlam.requiredKarma && BrotherKarmaUtils.IsBrotherStrict(attackerBody) && ModConfig.KarmaSlamLasers.Value)
+                        {
+                            FireWave();
+                        }
+                        if (KarmaManager.instance.GetEffectiveKarma() >= WeaponSlam.requiredKarma && BrotherKarmaUtils.IsBrotherStrict(attackerBody) && ModConfig.KarmaSlamLasers.Value)
+                        {
+                            FireCrystals();
+                        }
                     }
                 }
             }
@@ -155,6 +168,44 @@ namespace UmbralMithrix.EntityStates
             {
                 this.outer.SetNextStateToMain();
                 return;
+            }
+        }
+
+        private void FireWave()
+        {
+            float num = 360f / (float)WeaponSlam.ultProjectileCount;
+            Vector3 normalized = Vector3.ProjectOnPlane(UnityEngine.Random.onUnitSphere, Vector3.up).normalized;
+            Vector3 position = FindModelChild(muzzleString).position;
+            GameObject prefab = WeaponSlam.ultProjectilePrefab;
+            for (int i = 0; i < WeaponSlam.ultProjectileCount; i++)
+            {
+                Vector3 forward = Quaternion.AngleAxis(num * (float)i, Vector3.up) * normalized;
+                ProjectileManager.instance.FireProjectileWithoutDamageType(prefab, position, Util.QuaternionSafeLookRotation(forward), attackerObject, attackerBody.damage * waveProjectileDamageCoefficient, waveProjectileForce, Util.CheckRoll(attackerBody.crit, attackerBody.master));
+            }
+        }
+
+        private void FireCrystals()
+        {
+            float num = 360f / (float)WeaponSlam.crystalProjectileCount;
+            Vector3 normalized = Vector3.ProjectOnPlane(UnityEngine.Random.onUnitSphere, Vector3.up).normalized;
+            Transform transform = FindModelChild(muzzleString);
+            _ = WeaponSlam.ultProjectilePrefab;
+            for (int i = 0; i < WeaponSlam.crystalProjectileCount; i++)
+            {
+                Vector3 vector = Quaternion.AngleAxis(num * (float)i, Vector3.up) * normalized;
+                Vector3 position = transform.position + vector * WeaponSlam.crystalRadiusFromImpactPoint;
+                Quaternion rotation = Util.QuaternionSafeLookRotation(Vector3.RotateTowards(Vector3.up, -vector, WeaponSlam.crystalRotationForward * (MathF.PI / 180f), float.PositiveInfinity));
+                FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                {
+                    owner = outer.gameObject,
+                    damage = base.characterBody.damage * WeaponSlam.crystalProjectileDamage,
+                    projectilePrefab = WeaponSlam.crystalProjectilePrefab,
+                    position = position,
+                    rotation = rotation,
+                    procChainMask = default(ProcChainMask),
+                    crit = base.characterBody.RollCrit()
+                };
+                ProjectileManager.instance.FireProjectile(fireProjectileInfo);
             }
         }
 

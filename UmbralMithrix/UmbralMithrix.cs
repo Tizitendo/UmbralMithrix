@@ -38,7 +38,7 @@ namespace UmbralMithrix
         public const string PluginGUID = "com." + PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Nuxlar";
         public const string PluginName = "UmbralMithrix";
-        public const string PluginVersion = "2.5.22";
+        public const string PluginVersion = "2.5.23";
 
         internal static UmbralMithrix Instance { get; private set; }
 
@@ -137,12 +137,23 @@ namespace UmbralMithrix
             new MiscHooks();
             new MissionHooks();
             new MithrixMiscHooks();
+            new KarmicChanges();
 
             LanguageManager.Register(System.IO.Path.GetDirectoryName(Info.Location));
         }
 
         private void ChangeVanillaEntityStateValues()
         {
+            AssetReferenceT<EntityStateConfiguration> entityconfig = new AssetReferenceT<EntityStateConfiguration>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.EntityStates_BrotherMonster_Throne_Spawn_asset);
+            AssetAsyncReferenceManager<EntityStateConfiguration>.LoadAsset(entityconfig).Completed += (x) =>
+            {
+                x.Result.targetType = new SerializableSystemType
+                {
+                    assemblyQualifiedName = typeof(ThroneSpawnState)?.AssemblyQualifiedName,
+                    cachedAssemblyQualifiedName = typeof(ThroneSpawnState)?.AssemblyQualifiedName,
+                    cachedType = typeof(ThroneSpawnState)
+                };
+            };
             SetVanillaEntityStateField(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.EntityStates_BrotherMonster_FistSlam_asset, "healthCostFraction", "0");
             SetVanillaEntityStateField(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.EntityStates_BrotherMonster_SpellChannelEnterState_asset, "duration", "5");
             SetVanillaEntityStateField(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.EntityStates_BrotherMonster_SpellChannelState_asset, "stealInterval", "0");
@@ -384,20 +395,18 @@ namespace UmbralMithrix
             AssetReferenceT<GameObject> masterP3Ref = new AssetReferenceT<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.BrotherHurtMaster_prefab);
             AssetAsyncReferenceManager<GameObject>.LoadAsset(masterP3Ref).Completed += (x) =>
             {
-                GameObject result = x.Result;
-
-                foreach(AISkillDriver skill in result.GetComponents<AISkillDriver>())
+                foreach(AISkillDriver skill in x.Result.GetComponents<AISkillDriver>())
                 {
                     if (skill.customName == "HealBeam")
                     {
-                        foreach(KarmaEvent karma in result.GetComponents<KarmaEvent>())
+                        foreach(KarmaEvent karma in x.Result.GetComponents<KarmaEvent>())
                         {
                             RemoveListener(karma.unityEvent, skill, typeof(AISkillDriver).GetPropertySetter(nameof(AISkillDriver.enabled)));
                         }
                     }
                 }
 
-                mithrixHurtP3Master = PrefabAPI.InstantiateClone(result, "BrotherHurtMasterP3");
+                mithrixHurtP3Master = PrefabAPI.InstantiateClone(x.Result, "BrotherHurtMasterP3");
                 mithrixHurtP3Master.GetComponent<CharacterMaster>().bodyPrefab = mithrixHurtP3;
 
                 mithrixHurtP3Card.name = "cscBrotherHurtP3";
@@ -408,6 +417,17 @@ namespace UmbralMithrix
                 mithrixHurtP3Card.forbiddenFlags = mithrixHurtCard.forbiddenFlags;
 
                 ContentAddition.AddMaster(mithrixHurtP3Master);
+
+                foreach(AISkillDriver skill in x.Result.GetComponents<AISkillDriver>())
+                {
+                    if (skill.customName == "LaserStorm")
+                    {
+                        foreach(KarmaEvent karma in x.Result.GetComponents<KarmaEvent>())
+                        {
+                            RemoveListener(karma.unityEvent, skill, typeof(AISkillDriver).GetPropertySetter(nameof(AISkillDriver.enabled)));
+                        }
+                    }
+                }
             };
             AssetReferenceT<GameObject> practiceFireRef = new AssetReferenceT<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_bazaar.Bazaar_Light_prefab);
             AssetAsyncReferenceManager<GameObject>.LoadAsset(practiceFireRef).Completed += (x) =>
@@ -764,6 +784,8 @@ namespace UmbralMithrix
                     skinDefParamsReference.Reset();
                     AssetAsyncReferenceManager<SkinDef>.UnloadAsset(originalSkinRef);
                 };
+
+                ContentAddition.AddBody(mithrixGlass);
             };
             AssetReferenceT<GameObject> shardRef = new AssetReferenceT<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.LunarShardProjectile_prefab);
             AssetAsyncReferenceManager<GameObject>.LoadAsset(shardRef).Completed += (x) =>

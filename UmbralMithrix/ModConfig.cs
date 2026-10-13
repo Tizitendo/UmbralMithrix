@@ -45,6 +45,9 @@ namespace UmbralMithrix
         public static ConfigEntry<float> ShardHoming;
         public static ConfigEntry<float> ShardRange;
         public static ConfigEntry<float> ShardCone;
+        public static ConfigEntry<bool> KarmaHealth;
+        public static ConfigEntry<bool> KarmaSwipeShards;
+        public static ConfigEntry<bool> KarmaSlamLasers;
 
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         public static void Init()
@@ -271,6 +274,21 @@ namespace UmbralMithrix
                 10f,
                 "Cone (Angle) in which shards look for targets. Vanilla: 90",
                 90f, 180f);
+            KarmaSwipeShards = UMConfig.BindOption(
+                "Karma",
+                "Swipe Shards",
+                true,
+                "Karma 3: Create crystals on swipe", false);
+            KarmaSlamLasers = UMConfig.BindOption(
+                "Karma",
+                "Slam Laser",
+                true,
+                "Karma 3: Create circling lasers on slam", false);
+            KarmaHealth = UMConfig.BindOption(
+                "Karma",
+                "Health Boost",
+                true,
+                "Karma 8: +50% max health", false);
 
             WipeConfig();
         }

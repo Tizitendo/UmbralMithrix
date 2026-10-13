@@ -4,6 +4,7 @@ using EntityStates;
 using EntityStates.BrotherMonster;
 using System.Collections.Generic;
 using UnityEngine.Networking;
+using RoR2.Projectile;
 
 namespace UmbralMithrix.EntityStates;
 
@@ -57,6 +58,7 @@ public class HoldUmbralLeap : BaseState
                     this.characterMotor.Motor.SetPositionAndRotation(target, Quaternion.identity);
                 }
             }
+            AttemptFireGravZoneAuthority();
 
             GameObject workPls = GameObject.Instantiate(UmbralMithrix.leapIndicatorPrefab, this.characterBody.footPosition, Quaternion.identity);
             float radius = this.characterBody.radius / 2;
@@ -76,6 +78,32 @@ public class HoldUmbralLeap : BaseState
             return;
         this.outer.SetNextState(new ExitUmbralLeap());
     }
+
+    private void AttemptFireGravZoneAuthority()
+	{
+		if (ModConfig.Karma2.Value && BrotherKarmaUtils.IsBrother(base.characterBody) && KarmaManager.instance.GetEffectiveKarma() >= EnterSkyLeap.requiredKarmaForGravZone && (bool)EnterSkyLeap.gravZonePrefab)
+		{
+			_ = HoldSkyLeap.duration;
+			float fuseOverride = duration + EnterSkyLeap.gravZoneDurationFudge;
+			Vector3 position = base.characterBody.footPosition;
+			BrotherSkyLeapHelper component = outer.GetComponent<BrotherSkyLeapHelper>();
+			if ((bool)component && (bool)component.targetTransform)
+			{
+				position = component.targetTransform.position;
+			}
+			position += Vector3.up * EnterSkyLeap.gravZoneHeightOffset;
+			FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+			{
+				projectilePrefab = EnterSkyLeap.gravZonePrefab,
+				position = position,
+				rotation = Quaternion.identity,
+				fuseOverride = fuseOverride,
+				useFuseOverride = true,
+				owner = base.gameObject
+			};
+			ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+		}
+	}
 
     public override void OnExit()
     {

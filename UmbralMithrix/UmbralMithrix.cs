@@ -785,7 +785,8 @@ namespace UmbralMithrix
                     AssetAsyncReferenceManager<SkinDef>.UnloadAsset(originalSkinRef);
                 };
 
-                ContentAddition.AddBody(mithrixGlass);
+                if (BodyCatalog.FindBodyIndex(mithrixGlass.name) == BodyIndex.None)
+                    ContentAddition.AddBody(mithrixGlass);
             };
             AssetReferenceT<GameObject> shardRef = new AssetReferenceT<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.LunarShardProjectile_prefab);
             AssetAsyncReferenceManager<GameObject>.LoadAsset(shardRef).Completed += (x) =>

@@ -153,11 +153,11 @@ namespace UmbralMithrix.EntityStates
                             }
                             ProjectileManager.instance.FireProjectileWithoutDamageType(UmbralHammerSlam.pillarProjectilePrefab, vector2, Quaternion.identity, base.gameObject, base.characterBody.damage * UmbralHammerSlam.pillarDamageCoefficient, 0f, Util.CheckRoll(base.characterBody.crit, base.characterBody.master), DamageColorIndex.Default, null, -1f);
                         }
-                        if (KarmaManager.instance.GetEffectiveKarma() >= WeaponSlam.requiredKarma && BrotherKarmaUtils.IsBrotherStrict(attackerBody) && ModConfig.KarmaSlamLasers.Value)
+                        if (KarmaManager.instance.GetEffectiveKarma() >= WeaponSlam.requiredKarma && BrotherKarmaUtils.IsBrotherStrict(attackerBody) && ModConfig.Karma3.Value)
                         {
                             FireWave();
                         }
-                        if (KarmaManager.instance.GetEffectiveKarma() >= WeaponSlam.requiredKarma && BrotherKarmaUtils.IsBrotherStrict(attackerBody) && ModConfig.KarmaSlamLasers.Value)
+                        if (KarmaManager.instance.GetEffectiveKarma() >= WeaponSlam.requiredKarma && BrotherKarmaUtils.IsBrotherStrict(attackerBody) && ModConfig.Karma3.Value)
                         {
                             FireCrystals();
                         }

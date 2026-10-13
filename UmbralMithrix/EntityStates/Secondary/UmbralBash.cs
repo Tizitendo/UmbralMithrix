@@ -80,7 +80,7 @@ public class UmbralBash : BasicMeleeAttack
     public override void AuthorityFireAttack()
 	{
 		base.AuthorityFireAttack();
-		if (KarmaManager.instance.GetEffectiveKarma() >= 3 && BrotherKarmaUtils.IsBrotherStrict(attackerBody) && !hasFiredWaves && ModConfig.KarmaSwipeShards.Value)
+		if (KarmaManager.instance.GetEffectiveKarma() >= 3 && BrotherKarmaUtils.IsBrotherStrict(attackerBody) && !hasFiredWaves && ModConfig.Karma3.Value)
 		{
 			Transform transform = FindModelChild(SprintBash.muzzleString);
 			float num = SprintBash.waveProjectileArc / (float)SprintBash.waveProjectileCount;

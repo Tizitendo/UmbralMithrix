@@ -2,9 +2,9 @@
 
 - Fixed with updated ror2bepinexpack version
 - Removed golems from phase 4
-- Option (default: enabled): enable karma 3 swipe shards
-- Option (default: enabled): enable karma 3 slam lasers
-- Option (default: enabled): enable karma 8 health boost 
+- Option (default: enabled): enable karma 2
+- Option (default: enabled): enable karma 3
+- Option (default: enabled): enable karma 8
 
 `2.5.22`
 

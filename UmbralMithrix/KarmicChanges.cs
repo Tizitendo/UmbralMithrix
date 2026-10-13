@@ -31,7 +31,7 @@ public class KarmicChanges
 
         static bool KarmaHealthBoost()
         {
-            return ModConfig.KarmaHealth.Value;
+            return ModConfig.Karma8.Value;
         }
     }
 }

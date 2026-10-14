@@ -452,7 +452,7 @@ namespace UmbralMithrix
             AssetAsyncReferenceManager<GameObject>.LoadAsset(waveRef).Completed += (x) =>
             {
                 GameObject result = x.Result;
-                result.layer = (int)LayerIndex.pickups;
+                // result.layer = (int)LayerIndex.pickups;
                 // Transform hitBox = result.transform.Find("Hitbox");
                 // if (hitBox)
                 // {

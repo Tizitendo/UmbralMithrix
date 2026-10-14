@@ -45,10 +45,10 @@ public class EnterUmbralLeap : BaseState
 
     private void AttemptFireSkyLeapBombsAuthority()
 	{
-		if (KarmaManager.instance.GetEffectiveKarma() < EnterSkyLeap.requiredKarmaForSkyLeapBombs || !ModConfig.Karma2.Value)
-		{
+		if (KarmaManager.instance.GetEffectiveKarma() < EnterSkyLeap.requiredKarmaForSkyLeapBombs || true
+        // !ModConfig.Karma2.Value
+        )
 			return;
-		}
 		FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
 		{
 			procChainMask = default(ProcChainMask),

@@ -46,7 +46,7 @@ namespace UmbralMithrix
         public static ConfigEntry<float> ShardRange;
         public static ConfigEntry<float> ShardCone;
         
-        public static ConfigEntry<bool> Karma2;
+        // public static ConfigEntry<bool> Karma2;
         public static ConfigEntry<bool> Karma3;
         public static ConfigEntry<bool> Karma8;
 
@@ -275,11 +275,11 @@ namespace UmbralMithrix
                 10f,
                 "Cone (Angle) in which shards look for targets. Vanilla: 90",
                 90f, 180f);
-            Karma2 = UMConfig.BindOption(
-                "Karma",
-                "Karma 2",
-                true,
-                "Default: Enabled\n- Summon shockwave pillars on leap\n- Summon a black hole on leap", false);
+            // Karma2 = UMConfig.BindOption(
+            //     "Karma",
+            //     "Karma 2",
+            //     true,
+            //     "Default: Enabled\n- Summon shockwave pillars on leap\n- Summon a black hole on leap", false);
             Karma3 = UMConfig.BindOption(
                 "Karma",
                 "Karma 3",

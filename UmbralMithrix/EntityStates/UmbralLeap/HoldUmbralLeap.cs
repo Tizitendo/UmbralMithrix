@@ -81,7 +81,9 @@ public class HoldUmbralLeap : BaseState
 
     private void AttemptFireGravZoneAuthority()
 	{
-		if (ModConfig.Karma2.Value && BrotherKarmaUtils.IsBrother(base.characterBody) && KarmaManager.instance.GetEffectiveKarma() >= EnterSkyLeap.requiredKarmaForGravZone && (bool)EnterSkyLeap.gravZonePrefab)
+		if (false
+            // ModConfig.Karma2.Value 
+        && BrotherKarmaUtils.IsBrother(base.characterBody) && KarmaManager.instance.GetEffectiveKarma() >= EnterSkyLeap.requiredKarmaForGravZone && (bool)EnterSkyLeap.gravZonePrefab)
 		{
 			_ = HoldSkyLeap.duration;
 			float fuseOverride = duration + EnterSkyLeap.gravZoneDurationFudge;

@@ -279,17 +279,17 @@ namespace UmbralMithrix
                 "Karma",
                 "Karma 2",
                 true,
-                "Summon shockwave pillars and a black hole on leap", false);
+                "Default: Enabled\n- Summon shockwave pillars on leap\n- Summon a black hole on leap", false);
             Karma3 = UMConfig.BindOption(
                 "Karma",
                 "Karma 3",
                 true,
-                "Create crystals on swipe\nCreate circling lasers on slam", false);
+                "Default: Enabled\n- Create crystals on swipe\n- Create circling lasers on slam", false);
             Karma8 = UMConfig.BindOption(
                 "Karma",
                 "Karma 8",
                 true,
-                "+50% max health", false);
+                "Default: Enabled\n- +50% max health", false);
 
             WipeConfig();
         }

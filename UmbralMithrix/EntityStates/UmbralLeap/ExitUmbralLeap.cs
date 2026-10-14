@@ -69,7 +69,7 @@ public class ExitUmbralLeap : BaseState
         {
             Vector3 forward = Quaternion.AngleAxis(num * index, Vector3.up) * vector3;
             if (this.isAuthority)
-                ProjectileManager.instance.FireProjectileWithoutDamageType(ExitUmbralLeap.waveProjectilePrefab, footPosition, Util.QuaternionSafeLookRotation(forward), this.gameObject, this.characterBody.damage * ExitUmbralLeap.waveProjectileDamageCoefficient, ExitUmbralLeap.waveProjectileForce, Util.CheckRoll(this.characterBody.crit, this.characterBody.master));
+                ProjectileManager.instance.FireProjectileWithoutDamageType(UmbralMithrix.umbralLeapWave, footPosition, Util.QuaternionSafeLookRotation(forward), this.gameObject, this.characterBody.damage * ExitUmbralLeap.waveProjectileDamageCoefficient, ExitUmbralLeap.waveProjectileForce, Util.CheckRoll(this.characterBody.crit, this.characterBody.master));
         }
     }
 

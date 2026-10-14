@@ -452,6 +452,17 @@ namespace UmbralMithrix
             AssetAsyncReferenceManager<GameObject>.LoadAsset(waveRef).Completed += (x) =>
             {
                 GameObject result = x.Result;
+                result.layer = (int)LayerIndex.pickups;
+                // Transform hitBox = result.transform.Find("Hitbox");
+                // if (hitBox)
+                // {
+                //     MeshRenderer renderer = hitBox.GetComponent<MeshRenderer>();
+                //     Material newMaterial = new Material(renderer.material)
+                //     {
+                //         color = Color.magenta
+                //     };
+                //     renderer.sharedMaterial = newMaterial;
+                // }
                 umbralLeapWave = PrefabAPI.InstantiateClone(result, "UmbralLeapWave");
             };
         }

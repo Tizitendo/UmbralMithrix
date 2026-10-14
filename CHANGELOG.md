@@ -2,6 +2,8 @@
 
 - Fixed with updated ror2bepinexpack version
 - Removed golems from phase 4
+- Waves no longer collide with phase 2/3 crystals
+- Removed Karma 8 health boost from phase 4
 - Option (default: enabled): enable karma 2
 - Option (default: enabled): enable karma 3
 - Option (default: enabled): enable karma 8

@@ -31,7 +31,7 @@ public class KarmicChanges
 
         static bool KarmaHealthBoost()
         {
-            return ModConfig.Karma8.Value;
+            return ModConfig.Karma8.Value && PhaseCounter.instance.phase != 4;
         }
     }
 }

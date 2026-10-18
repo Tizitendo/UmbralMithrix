@@ -45,10 +45,11 @@ public class EnterUmbralLeap : BaseState
 
     private void AttemptFireSkyLeapBombsAuthority()
 	{
-		if (KarmaManager.instance.GetEffectiveKarma() < EnterSkyLeap.requiredKarmaForSkyLeapBombs || true
-        // !ModConfig.Karma2.Value
-        )
+		if (KarmaManager.instance.GetEffectiveKarma() < EnterSkyLeap.requiredKarmaForSkyLeapBombs || !ModConfig.Karma2.Value)
 			return;
+        if (UmbralMissionController.instance.timeCrystals.Count > 0)
+            return;
+
 		FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
 		{
 			procChainMask = default(ProcChainMask),
@@ -63,7 +64,7 @@ public class EnterUmbralLeap : BaseState
 			rotation = Quaternion.identity,
 			useFuseOverride = true
 		};
-		for (int i = 0; i < 4; i++)
+        for (int i = 0; i < UmbralMithrix.p23PizzaPoints.Count; i++)
 		{
 			FireProjectileInfo fireProjectileInfo2 = fireProjectileInfo;
             fireProjectileInfo2.position = UmbralMithrix.p23PizzaPoints[i] + EnterSkyLeap.skyLeapBombHeightOffset * Vector3.up;
@@ -71,6 +72,4 @@ public class EnterUmbralLeap : BaseState
 			ProjectileManager.instance.FireProjectile(fireProjectileInfo2);
 		}
 	}
-
-	
 }

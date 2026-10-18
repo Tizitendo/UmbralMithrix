@@ -32,6 +32,14 @@ namespace UmbralMithrix
             On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += AddTimedBuff_BuffDef_float;
             On.EntityStates.Destructible.TimeCrystalDeath.OnEnter += RemoveUmbralImmune;
             On.RoR2.ItemStealController.BrotherItemFilter += ItemStealController_BrotherItemFilter;
+            On.RoR2.Items.PhysicsProjectileBehavior.canSpawnAlly += PhysicsProjectileBehavior_canSpawnAlly;
+        }
+
+        private bool PhysicsProjectileBehavior_canSpawnAlly(On.RoR2.Items.PhysicsProjectileBehavior.orig_canSpawnAlly orig, RoR2.Items.PhysicsProjectileBehavior self)
+        {
+            return orig(self) && 
+            PhaseCounter.instance && PhaseCounter.instance.phase != 4 && 
+            UmbralMissionController.instance;
         }
 
         private bool ItemStealController_BrotherItemFilter(On.RoR2.ItemStealController.orig_BrotherItemFilter orig, ItemIndex itemIndex)

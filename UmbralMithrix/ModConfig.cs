@@ -46,7 +46,9 @@ namespace UmbralMithrix
         public static ConfigEntry<float> ShardRange;
         public static ConfigEntry<float> ShardCone;
         
-        // public static ConfigEntry<bool> Karma2;
+        public static ConfigEntry<bool> KarmaStatChanges;
+        public static ConfigEntry<bool> Karma1;
+        public static ConfigEntry<bool> Karma2;
         public static ConfigEntry<bool> Karma3;
         public static ConfigEntry<bool> Karma8;
 
@@ -275,11 +277,21 @@ namespace UmbralMithrix
                 10f,
                 "Cone (Angle) in which shards look for targets. Vanilla: 90",
                 90f, 180f);
-            // Karma2 = UMConfig.BindOption(
-            //     "Karma",
-            //     "Karma 2",
-            //     true,
-            //     "Default: Enabled\n- Summon shockwave pillars on leap\n- Summon a black hole on leap", false);
+            KarmaStatChanges = UMConfig.BindOption(
+                "Karma",
+                "Karma Stat Changes",
+                true,
+                "Default: Enabled\n- +1% damage per karma level\n- +30% move speed and attack speed\n- 50% skill cooldowns (does nothing on e7+)", false);
+            Karma1 = UMConfig.BindOption(
+                "Karma",
+                "Karma 1",
+                true,
+                "Default: Enabled\n- Gain super armor every 10% of health lost", false);
+            Karma2 = UMConfig.BindOption(
+                "Karma",
+                "Karma 2",
+                true,
+                "Default: Enabled\n- Summon shockwave pillars on leap\n- Summon a black hole on leap\n- Leave crystal spikes on dash", false);
             Karma3 = UMConfig.BindOption(
                 "Karma",
                 "Karma 3",

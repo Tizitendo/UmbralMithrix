@@ -157,6 +157,7 @@ namespace UmbralMithrix
             SetVanillaEntityStateField(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.EntityStates_BrotherMonster_FistSlam_asset, "healthCostFraction", "0");
             SetVanillaEntityStateField(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.EntityStates_BrotherMonster_SpellChannelEnterState_asset, "duration", "5");
             SetVanillaEntityStateField(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.EntityStates_BrotherMonster_SpellChannelState_asset, "stealInterval", "0");
+            SetVanillaEntityStateField(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.EntityStates_BrotherMonster_Throne_Spawn_asset, "duration", "3");
         }
 
         public static void ArenaSetup()
@@ -358,8 +359,6 @@ namespace UmbralMithrix
                     }
                 }
 
-                
-
                 characterBody.baseNameToken = "UMBRALMITHRIX_UMBRAL_BODY_NAME";
                 characterBody.subtitleNameToken = "UMBRALMITHRIX_UMBRAL_BODY_SUBTITLE";
 
@@ -452,17 +451,7 @@ namespace UmbralMithrix
             AssetAsyncReferenceManager<GameObject>.LoadAsset(waveRef).Completed += (x) =>
             {
                 GameObject result = x.Result;
-                // result.layer = (int)LayerIndex.pickups;
-                // Transform hitBox = result.transform.Find("Hitbox");
-                // if (hitBox)
-                // {
-                //     MeshRenderer renderer = hitBox.GetComponent<MeshRenderer>();
-                //     Material newMaterial = new Material(renderer.material)
-                //     {
-                //         color = Color.magenta
-                //     };
-                //     renderer.sharedMaterial = newMaterial;
-                // }
+                result.AddComponent<WaveController>();
                 umbralLeapWave = PrefabAPI.InstantiateClone(result, "UmbralLeapWave");
             };
         }

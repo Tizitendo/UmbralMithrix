@@ -1,11 +1,11 @@
 # Umbral Mithrix
 
+This is a reupload of the original Umbral Mithrix (made with permission) that fixes the mod for the Hallowed Concepts update.
+
 **_SUBMIT ANY ISSUES FOUND WITH A LOG TO THE LINK ABOVE_**
 
 **INCOMPATIBLE WITH OTHER MITHRIX MODS AND WILL NOT RUN IF THEY ARE INSTALLED (Artifact of the King, RiskyMithrix)** <br>
 *mithrix mods should not be stacked to prevent weird bugs/interactions, and no it doesn't make a super difficult mithrix just a very buggy one*
-
-This is a reupload of the original Umbral Mithrix (made with permission) that fixes the mod for the Hallowed Concepts update.
 
 Major reworks to the fight, a new trophy item, and a practice mode. When you spawn on the moon there'll be a shrine to optionally activate the mode. You only need to interact with it once. When completing the fight you'll get a trophy item to track your victories against Umbral.
 

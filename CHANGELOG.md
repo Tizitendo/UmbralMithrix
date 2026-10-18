@@ -1,10 +1,18 @@
-`2.5.22`
+`2.5.24`
+
+- Added karma stat toggle
+- Added karma 1 toggle
+- Added karma 2 toggle
+- Temporary clones are no longer affected by karma
+- Increased spawn animation duration
+- Fixed best buddy being able to spawn in phase 4
+- Waves now get destroyed when they get blocked by anything
+
+`2.5.23`
 
 - Fixed with updated ror2bepinexpack version
 - Removed golems from phase 4
-- Waves no longer collide with phase 2/3 crystals
 - Removed Karma 8 health boost from phase 4
-- Option (default: enabled): enable karma 2
 - Option (default: enabled): enable karma 3
 - Option (default: enabled): enable karma 8
 

@@ -21,7 +21,7 @@ public class UmbralBash : BasicMeleeAttack
 
     public override void OnEnter()
     {
-        attackerBody = BrotherKarmaUtils.GetBodyResponsibleForDamage(base.characterBody);
+        attackerBody = base.characterBody;
 		attackerObject = attackerBody.gameObject;
         baseDuration = 4f;
         damageCoefficient = 2f;

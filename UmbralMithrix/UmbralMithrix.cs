@@ -23,6 +23,8 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.Events;
 using UnityEngine.Networking;
 
+[assembly: HG.Reflection.SearchableAttribute.OptIn]
+
 namespace UmbralMithrix
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
@@ -38,7 +40,7 @@ namespace UmbralMithrix
         public const string PluginGUID = "com." + PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Nuxlar";
         public const string PluginName = "UmbralMithrix";
-        public const string PluginVersion = "2.5.23";
+        public const string PluginVersion = "2.5.25";
 
         internal static UmbralMithrix Instance { get; private set; }
 
@@ -84,8 +86,7 @@ namespace UmbralMithrix
         public static GameObject mithrixHurt;
         public static SpawnCard mithrixCard;
         public static SpawnCard mithrixHurtCard;
-        public static GameObject mithrixGlass;
-        public static SpawnCard mithrixGlassCard;
+        public static SpawnCard mithrixPhantomCard;
         public static GameObject leftP4Line;
         public static GameObject rightP4Line;
         public static GameObject leftUltLine;
@@ -138,6 +139,7 @@ namespace UmbralMithrix
             new MissionHooks();
             new MithrixMiscHooks();
             new KarmicChanges();
+            CloneController.Init();
 
             LanguageManager.Register(System.IO.Path.GetDirectoryName(Info.Location));
         }
@@ -525,269 +527,6 @@ namespace UmbralMithrix
                 SkillDef skillDef4 = skillLocator.special.skillFamily.variants[0].skillDef;
                 skillDef4.baseRechargeInterval = ModConfig.SpecialCD.Value;
             };
-            AssetReferenceT<GameObject> glassMasterRef = new AssetReferenceT<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Junk_BrotherGlass.BrotherGlassMaster_prefab);
-            AssetAsyncReferenceManager<GameObject>.LoadAsset(glassMasterRef).Completed += (x) =>
-            {
-                GameObject prefab = x.Result;
-                List<AISkillDriver> drivers = prefab.GetComponents<AISkillDriver>().ToList();
-
-                foreach (AISkillDriver driver in drivers)
-                {
-                    if (driver.customName == "CastUlt")
-                        driver.requiredSkill = null;
-                }
-            };
-            AssetReferenceT<SkinDef> originalSkinRef = new AssetReferenceT<SkinDef>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.skinBrotherBodyDefault_asset);
-            SkinDef originalSkin = AssetAsyncReferenceManager<SkinDef>.LoadAsset(originalSkinRef).WaitForCompletion();
-            AssetReferenceT<GameObject> glassBodyRef = new AssetReferenceT<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Junk_BrotherGlass.BrotherGlassBody_prefab);
-            AssetAsyncReferenceManager<GameObject>.LoadAsset(glassBodyRef).Completed += (x) =>
-            {
-                mithrixGlass = x.Result;
-                mithrixGlass.GetComponent<EntityStateMachine>().initialStateType = new SerializableEntityStateType(typeof(EntityStates.GlassSpawnState));
-
-                CharacterBody characterBody = mithrixGlass.GetComponent<CharacterBody>();
-                CharacterDirection characterDirection = mithrixGlass.GetComponent<CharacterDirection>();
-                CharacterMotor characterMotor = mithrixGlass.GetComponent<CharacterMotor>();
-
-                characterBody.baseMaxHealth = ModConfig.basehealth.Value;
-                characterBody.levelMaxHealth = ModConfig.levelhealth.Value;
-
-                characterBody.baseDamage = ModConfig.basedamage.Value / 2f;
-                characterBody.levelDamage = ModConfig.leveldamage.Value / 2f;
-                characterMotor.airControl = ModConfig.aircontrol.Value;
-                characterDirection.turnSpeed = ModConfig.turningspeed.Value;
-
-                SkillDef skillDef = ScriptableObject.CreateInstance<SkillDef>();
-                skillDef.skillName = "UmbralOrb";
-                (skillDef as ScriptableObject).name = "UmbralOrb";
-
-                skillDef.activationState = new SerializableEntityStateType(typeof(GlassOrbAttack));
-                skillDef.activationStateMachineName = "Body";
-                skillDef.interruptPriority = InterruptPriority.PrioritySkill;
-
-                skillDef.baseMaxStock = 1;
-                skillDef.baseRechargeInterval = 6f;
-
-                skillDef.rechargeStock = 1;
-                skillDef.requiredStock = 1;
-                skillDef.stockToConsume = 1;
-
-                skillDef.dontAllowPastMaxStocks = true;
-                skillDef.beginSkillCooldownOnSkillEnd = false;
-                skillDef.canceledFromSprinting = true;
-                skillDef.forceSprintDuringState = false;
-                skillDef.fullRestockOnAssign = true;
-                skillDef.resetCooldownTimerOnUse = true;
-                skillDef.isCombatSkill = true;
-                skillDef.mustKeyPress = false;
-                skillDef.cancelSprintingOnActivation = true;
-
-                SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
-                (newFamily as ScriptableObject).name = "UmbralGlassPrimaryFamily";
-                newFamily.variants = new SkillFamily.Variant[1] { new SkillFamily.Variant { skillDef = skillDef } };
-
-                GenericSkill skill = mithrixGlass.AddComponent<GenericSkill>();
-                skill._skillFamily = newFamily;
-                mithrixGlass.GetComponent<SkillLocator>().special = skill;
-
-                ContentAddition.AddSkillFamily(newFamily);
-                ContentAddition.AddSkillDef(skillDef);
-
-                // Hack to get around starting a new async operation in the Complete callback not being allowed
-                RoR2Application.onNextUpdate += () =>
-                {
-                    Transform modelTransform = null;
-                    if (mithrixGlass && mithrixGlass.TryGetComponent(out ModelLocator modelLocator))
-                    {
-                        modelTransform = modelLocator.modelTransform;
-                    }
-
-                    if (!modelTransform)
-                        return;
-
-                    ModelSkinController modelSkinController = modelTransform.gameObject.EnsureComponent<ModelSkinController>();
-                    modelSkinController.skins ??= Array.Empty<SkinDef>();
-                    int replacementSkinIndex = Array.IndexOf(modelSkinController.skins, originalSkin);
-
-                    SkinDef skinDef = Instantiate(originalSkin);
-                    skinDef.name = "skinBrotherGlassBodyDefault";
-                    Transform originalSkinRoot = skinDef.rootObject.transform;
-                    skinDef.rootObject = modelTransform.gameObject;
-
-                    (AssetReferenceT<SkinDefParams> paramsAddress, SkinDefParams paramsDirect) = skinDef.GetSkinParams();
-                    AssetOrDirectReference<SkinDefParams> skinDefParamsReference = new AssetOrDirectReference<SkinDefParams>
-                    {
-                        address = paramsAddress,
-                        directRef = paramsDirect
-                    };
-
-                    SkinDefParams skinDefParams = Instantiate(skinDefParamsReference.WaitForCompletion());
-                    skinDefParams.name = $"{skinDef.name}_params";
-                    skinDef.skinDefParams = skinDefParams;
-                    skinDef.skinDefParamsAddress = new AssetReferenceT<SkinDefParams>(string.Empty);
-                    skinDef.optimizedSkinDefParams = skinDefParams;
-                    skinDef.optimizedSkinDefParamsAddress = new AssetReferenceT<SkinDefParams>(string.Empty);
-
-                    List<CharacterModel.RendererInfo> rendererInfos = [.. skinDefParams.rendererInfos];
-                    List<SkinDefParams.GameObjectActivation> gameObjectActivations = [.. skinDefParams.gameObjectActivations];
-                    List<SkinDefParams.MeshReplacement> meshReplacements = [.. skinDefParams.meshReplacements];
-                    List<CharacterModel.LightInfo> lightReplacements = [.. skinDefParams.lightReplacements];
-
-                    for (int i = rendererInfos.Count - 1; i >= 0; i--)
-                    {
-                        CharacterModel.RendererInfo rendererInfo = rendererInfos[i];
-
-                        Renderer originalRenderer = rendererInfo.renderer;
-                        rendererInfo.renderer = null;
-                        if (originalRenderer && originalRenderer.transform.IsChildOf(originalSkinRoot))
-                        {
-                            string rendererPath = Util.BuildPrefabTransformPath(originalSkinRoot, originalRenderer.transform);
-
-                            if (!string.IsNullOrEmpty(rendererPath))
-                            {
-                                Transform rendererTransform = modelTransform.Find(rendererPath);
-                                if (rendererTransform)
-                                {
-                                    rendererInfo.renderer = rendererTransform.GetComponent(originalRenderer.GetType()) as Renderer;
-                                }
-                            }
-                        }
-
-                        if (rendererInfo.renderer)
-                        {
-                            switch (rendererInfo.renderer.name)
-                            {
-                                case "BrotherHammerConcrete":
-                                case "BrotherBodyMesh":
-                                    rendererInfo.defaultMaterial = null;
-                                    rendererInfo.defaultMaterialAddress = new AssetReferenceT<Material>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.maBrotherGlassOverlay_mat);
-                                    break;
-                            }
-
-                            rendererInfos[i] = rendererInfo;
-                        }
-                        else
-                        {
-                            rendererInfos.RemoveAt(i);
-                        }
-                    }
-
-                    for (int i = gameObjectActivations.Count - 1; i >= 0; i--)
-                    {
-                        SkinDefParams.GameObjectActivation gameObjectActivation = gameObjectActivations[i];
-
-                        GameObject originalObject = gameObjectActivation.gameObject;
-                        gameObjectActivation.gameObject = null;
-
-                        if (originalObject && originalObject.transform.IsChildOf(originalSkinRoot))
-                        {
-                            string objectPath = Util.BuildPrefabTransformPath(originalSkinRoot, originalObject.transform);
-
-                            if (!string.IsNullOrEmpty(objectPath))
-                            {
-                                Transform objectTransform = modelTransform.Find(objectPath);
-                                if (objectTransform)
-                                {
-                                    gameObjectActivation.gameObject = objectTransform.gameObject;
-                                }
-                            }
-                        }
-
-                        if (gameObjectActivation.gameObject)
-                        {
-                            gameObjectActivations[i] = gameObjectActivation;
-                        }
-                        else
-                        {
-                            gameObjectActivations.RemoveAt(i);
-                        }
-                    }
-
-                    for (int i = meshReplacements.Count - 1; i >= 0; i--)
-                    {
-                        SkinDefParams.MeshReplacement meshReplacement = meshReplacements[i];
-
-                        Renderer originalRenderer = meshReplacement.renderer;
-                        meshReplacement.renderer = null;
-
-                        if (originalRenderer && originalRenderer.transform.IsChildOf(originalSkinRoot))
-                        {
-                            string rendererPath = Util.BuildPrefabTransformPath(originalSkinRoot, originalRenderer.transform);
-
-                            if (!string.IsNullOrEmpty(rendererPath))
-                            {
-                                Transform rendererTransform = modelTransform.Find(rendererPath);
-                                if (rendererTransform)
-                                {
-                                    meshReplacement.renderer = rendererTransform.GetComponent(originalRenderer.GetType()) as Renderer;
-                                }
-                            }
-                        }
-
-                        if (meshReplacement.renderer)
-                        {
-                            meshReplacements[i] = meshReplacement;
-                        }
-                        else
-                        {
-                            meshReplacements.RemoveAt(i);
-                        }
-                    }
-
-                    for (int i = lightReplacements.Count - 1; i >= 0; i--)
-                    {
-                        CharacterModel.LightInfo lightReplacement = lightReplacements[i];
-
-                        Light originalLight = lightReplacement.light;
-                        lightReplacement.light = null;
-
-                        if (originalLight && originalLight.transform.IsChildOf(originalSkinRoot))
-                        {
-                            string lightPath = Util.BuildPrefabTransformPath(originalSkinRoot, originalLight.transform);
-                            if (!string.IsNullOrEmpty(lightPath))
-                            {
-                                Transform lightTransform = modelTransform.Find(lightPath);
-                                if (lightTransform)
-                                {
-                                    lightReplacement.light = lightTransform.GetComponent(originalLight.GetType()) as Light;
-                                }
-                            }
-                        }
-
-                        if (lightReplacement.light)
-                        {
-                            lightReplacements[i] = lightReplacement;
-                        }
-                        else
-                        {
-                            lightReplacements.RemoveAt(i);
-                        }
-                    }
-
-                    skinDefParams.rendererInfos = [.. rendererInfos];
-                    skinDefParams.gameObjectActivations = [.. gameObjectActivations];
-                    skinDefParams.meshReplacements = [.. meshReplacements];
-                    skinDefParams.lightReplacements = [.. lightReplacements];
-
-                    if (ArrayUtils.IsInBounds(modelSkinController.skins, replacementSkinIndex))
-                    {
-                        modelSkinController.skins[replacementSkinIndex] = skinDef;
-                    }
-                    else
-                    {
-                        ArrayUtils.ArrayAppend(ref modelSkinController.skins, skinDef);
-                    }
-
-                    PersistentOverlayController overlayController = modelTransform.gameObject.EnsureComponent<PersistentOverlayController>();
-                    overlayController.OverlayMaterialReference = new AssetReferenceT<Material>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.matBrotherGlassDistortion_mat);
-
-                    skinDefParamsReference.Reset();
-                    AssetAsyncReferenceManager<SkinDef>.UnloadAsset(originalSkinRef);
-                };
-
-                if (BodyCatalog.FindBodyIndex(mithrixGlass.name) == BodyIndex.None)
-                    ContentAddition.AddBody(mithrixGlass);
-            };
             AssetReferenceT<GameObject> shardRef = new AssetReferenceT<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.LunarShardProjectile_prefab);
             AssetAsyncReferenceManager<GameObject>.LoadAsset(shardRef).Completed += (x) =>
             {
@@ -810,8 +549,6 @@ namespace UmbralMithrix
             AssetAsyncReferenceManager<SpawnCard>.LoadAsset(mithrixCardRef).Completed += (x) => mithrixCard = x.Result;
             AssetReferenceT<SpawnCard> mithrixHurtCardRef = new AssetReferenceT<SpawnCard>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.cscBrotherHurt_asset);
             AssetAsyncReferenceManager<SpawnCard>.LoadAsset(mithrixHurtCardRef).Completed += (x) => mithrixHurtCard = x.Result;
-            AssetReferenceT<SpawnCard> glassCardRef = new AssetReferenceT<SpawnCard>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Junk_BrotherGlass.cscBrotherGlass_asset);
-            AssetAsyncReferenceManager<SpawnCard>.LoadAsset(glassCardRef).Completed += (x) => mithrixGlassCard = x.Result;
 
             AssetReferenceT<Material> bossMatRef = new AssetReferenceT<Material>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.matBrotherPreBossSphere_mat);
             AssetAsyncReferenceManager<Material>.LoadAsset(bossMatRef).Completed += (x) => preBossMat = x.Result;

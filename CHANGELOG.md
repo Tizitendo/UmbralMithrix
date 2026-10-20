@@ -1,3 +1,8 @@
+`2.5.25`
+
+- Changed the umbral clones to the unused karma clones model
+- Reduced karma 2 black hole duration by 1 second
+
 `2.5.24`
 
 - Added karma stat toggle

@@ -41,7 +41,7 @@ namespace UmbralMithrix.EntityStates
         public override void OnEnter()
         {
             base.OnEnter();
-            attackerBody = BrotherKarmaUtils.GetBodyResponsibleForDamage(base.characterBody);
+            attackerBody = base.characterBody;
 		    attackerObject = attackerBody.gameObject;
             this.modelAnimator = base.GetModelAnimator();
             this.modelTransform = base.GetModelTransform();

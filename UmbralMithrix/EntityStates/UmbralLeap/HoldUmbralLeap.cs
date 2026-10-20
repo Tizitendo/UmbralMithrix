@@ -85,7 +85,7 @@ public class HoldUmbralLeap : BaseState
         && BrotherKarmaUtils.IsBrother(base.characterBody) && KarmaManager.instance.GetEffectiveKarma() >= EnterSkyLeap.requiredKarmaForGravZone && (bool)EnterSkyLeap.gravZonePrefab)
 		{
 			_ = HoldSkyLeap.duration;
-			float fuseOverride = duration + EnterSkyLeap.gravZoneDurationFudge;
+			float fuseOverride = duration + EnterSkyLeap.gravZoneDurationFudge - 1;
 			Vector3 position = base.characterBody.footPosition;
 			BrotherSkyLeapHelper component = outer.GetComponent<BrotherSkyLeapHelper>();
 			if ((bool)component && (bool)component.targetTransform)

@@ -4,6 +4,7 @@ using RoR2;
 using RoR2.Projectile;
 using UnityEngine;
 
+//honestly this is probably exactly what a patcher would be good for, I'm just adding pullMagnitudeDistanceCurve
 public class PullController : MonoBehaviour
 {
 	[NonSerialized]
@@ -22,6 +23,8 @@ public class PullController : MonoBehaviour
 
 	public float durationOfMaxPull;
 
+	public float distanceForMaxPull;
+
 	[Tooltip("If true, affects every team EXCEPT the defined team.")]
 	[SerializeField]
 	private bool invertTeamFilter;
@@ -30,12 +33,12 @@ public class PullController : MonoBehaviour
 
 	private void Start()
 	{
-		if (TryGetComponent(out ProjectileController projectileController))
+		if (transform.parent.TryGetComponent(out ProjectileController projectileController))
 		{
 			owner = projectileController.owner;
 			ownerBody = owner.GetComponent<CharacterBody>();
 		}
-		teamFilter = GetComponent<TeamFilter>();
+		teamFilter = transform.parent.GetComponent<TeamFilter>();
         losTracker = new CharacterLosTracker
         {
             enabled = true
@@ -51,11 +54,11 @@ public class PullController : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		age += Time.deltaTime;
+		age += Time.fixedDeltaTime;
 		float time = Mathf.Clamp01(age / durationOfMaxPull);
-		ReadOnlyCollection<CharacterBody> readOnlyInstancesList = CharacterBody.readOnlyInstancesList;
 		float pullCoeff = pullMagnitudeTimeCurve.Evaluate(time);
 
+		ReadOnlyCollection<CharacterBody> readOnlyInstancesList = CharacterBody.readOnlyInstancesList;
 		for (int i = 0; i < readOnlyInstancesList.Count; i++)
 		{
 			CharacterBody characterBody = readOnlyInstancesList[i];
@@ -66,9 +69,9 @@ public class PullController : MonoBehaviour
 			if (characterBody.hasEffectiveAuthority && characterBody.TryGetComponent(out IDisplacementReceiver displacementReceiver))
 			{
                 Vector3 pullVector = transform.position - characterBody.transform.position;
-                displacementReceiver?.AddDisplacement(pullVector.normalized * 
-                                                    (pullCoeff * hasLOS * Time.deltaTime) *
-                                                    pullMagnitudeDistanceCurve.Evaluate(pullVector.magnitude/500));
+                displacementReceiver.AddDisplacement(pullVector.normalized * 
+                                                    (pullCoeff * hasLOS * Time.fixedDeltaTime) *
+                                                    pullMagnitudeDistanceCurve.Evaluate(pullVector.magnitude / distanceForMaxPull));
 			}
 		}
 	}

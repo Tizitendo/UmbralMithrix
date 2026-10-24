@@ -19,7 +19,6 @@ namespace UmbralMithrix
     {
         private static SpawnCard _cloneCard;
         private static GameObject _phantomBody;
-        // private static Material matNewPhantom;
         
         private List<CharacterBody> playerBodies = new();
         private float stopwatch = 0f;
@@ -31,8 +30,6 @@ namespace UmbralMithrix
             _phantomBody = AssetAsyncReferenceManager<GameObject>.LoadAsset(glassBodyRef).WaitForCompletion();
             AssetReferenceT<SkinDef> originalSkinRef = new AssetReferenceT<SkinDef>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.skinBrotherBodyDefault_asset);
             SkinDef originalSkin = AssetAsyncReferenceManager<SkinDef>.LoadAsset(originalSkinRef).WaitForCompletion();
-
-            // matNewPhantom = UmbralMithrix.Bundle.LoadAsset<Material>("Assets/Assets/Materials/matNewPhantom.mat");
 
             AssetReferenceT<SpawnCard> phantomCardRef = new AssetReferenceT<SpawnCard>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Junk_BrotherGlass.cscBrotherGlass_asset);
             AssetAsyncReferenceManager<SpawnCard>.LoadAsset(phantomCardRef).Completed += (x) => 

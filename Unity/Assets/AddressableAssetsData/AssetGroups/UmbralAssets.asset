@@ -17,16 +17,12 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 7478bcdfc11b26d37a7b3ff27d6488ce
   m_SerializeEntries:
-  - m_GUID: 39ea869ea7c8781109222654106c37ef
-    m_Address: Assets/Assets/testprefab.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: d075149bfbfb434afaea661b12c12f38
-    m_Address: Assets/Assets/mattest.mat
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   - m_GUID: 884f43d55a87e0580aa62f28566e6767
     m_Address: Assets/Assets/Materials/matNewPhantom.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f21b3b404ec6eba2ea1ca24a3f0a25fe
+    m_Address: Assets/Assets/Objects/PullController.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

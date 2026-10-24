@@ -19,6 +19,7 @@ namespace UmbralMithrix
     {
         private static SpawnCard _cloneCard;
         private static GameObject _phantomBody;
+        // private static Material matNewPhantom;
         
         private List<CharacterBody> playerBodies = new();
         private float stopwatch = 0f;
@@ -30,6 +31,8 @@ namespace UmbralMithrix
             _phantomBody = AssetAsyncReferenceManager<GameObject>.LoadAsset(glassBodyRef).WaitForCompletion();
             AssetReferenceT<SkinDef> originalSkinRef = new AssetReferenceT<SkinDef>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_Brother.skinBrotherBodyDefault_asset);
             SkinDef originalSkin = AssetAsyncReferenceManager<SkinDef>.LoadAsset(originalSkinRef).WaitForCompletion();
+
+            // matNewPhantom = UmbralMithrix.Bundle.LoadAsset<Material>("Assets/Assets/Materials/matNewPhantom.mat");
 
             AssetReferenceT<SpawnCard> phantomCardRef = new AssetReferenceT<SpawnCard>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Junk_BrotherGlass.cscBrotherGlass_asset);
             AssetAsyncReferenceManager<SpawnCard>.LoadAsset(phantomCardRef).Completed += (x) => 
@@ -95,9 +98,13 @@ namespace UmbralMithrix
                 (newFamily as ScriptableObject).name = "UmbralPhantomPrimaryFamily";
                 newFamily.variants = new SkillFamily.Variant[1] { new SkillFamily.Variant { skillDef = skillDef } };
 
-                GenericSkill skill = _phantomBody.AddComponent<GenericSkill>();
-                skill._skillFamily = newFamily;
-                _phantomBody.GetComponent<SkillLocator>().special = skill;
+                if (_phantomBody.TryGetComponent(out SkillLocator skillLocator))
+                {
+                    GenericSkill skill = _phantomBody.AddComponent<GenericSkill>();
+                    skill._skillFamily = newFamily;
+                    skillLocator.special = skill;
+                    skillLocator.primary = null;
+                }
 
                 // Hack to get around starting a new async operation in the Complete callback not being allowed
                 RoR2Application.onNextUpdate += () =>
@@ -289,6 +296,28 @@ namespace UmbralMithrix
 
                     skinDefParamsReference.Reset();
                     AssetAsyncReferenceManager<SkinDef>.UnloadAsset(originalSkinRef);
+
+                    AssetAsyncReferenceManager<SkinDefParams>.LoadAsset(modelSkinController.skins[0].skinDefParamsAddress).Completed += (x) =>
+                    {
+                        for (int i = x.Result.rendererInfos.Count() - 1; i >= 0; i--)
+                        {
+                            CharacterModel.RendererInfo rendererInfo = x.Result.rendererInfos[i];
+
+                            if (rendererInfo.renderer)
+                            {
+                                switch (rendererInfo.renderer.name)
+                                {
+                                    case "BrotherHammerConcrete":
+                                    case "BrotherBodyMesh":
+                                        rendererInfo.defaultMaterial = UmbralMithrix.Bundle.LoadAsset<Material>("Assets/Assets/Materials/matNewPhantom.mat");
+                                        rendererInfo.defaultMaterialAddress = null;
+                                        break;
+                                }
+
+                                x.Result.rendererInfos[i] = rendererInfo;
+                            }
+                        }
+                    };
                 };
 
                 ContentAddition.AddSkillFamily(newFamily);

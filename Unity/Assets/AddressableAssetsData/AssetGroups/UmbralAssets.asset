@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: UmbralAssets
+  m_EditorClassIdentifier: 
+  m_GroupName: UmbralAssets
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 7478bcdfc11b26d37a7b3ff27d6488ce
+  m_SerializeEntries:
+  - m_GUID: 39ea869ea7c8781109222654106c37ef
+    m_Address: Assets/Assets/testprefab.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d075149bfbfb434afaea661b12c12f38
+    m_Address: Assets/Assets/mattest.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 884f43d55a87e0580aa62f28566e6767
+    m_Address: Assets/Assets/Materials/matNewPhantom.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 16d5b58ebccdf78d984c5a37d4deefac, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 9b0e15ff064116a968c3e5ffc71d7625, type: 2}
+    - {fileID: 11400000, guid: 9b0f30e2e60f6381e8e0e7aaf68a3c05, type: 2}

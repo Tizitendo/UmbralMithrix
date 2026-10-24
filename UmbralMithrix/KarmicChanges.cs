@@ -4,21 +4,35 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using R2API.Utils;
 using RoR2;
+using RoR2.ContentManagement;
+using RoR2BepInExPack.GameAssetPathsBetter;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace UmbralMithrix;
 
 public class KarmicChanges
 {
-    public KarmicChanges()
+
+    [SystemInitializer]
+    public static void Init()
     {
         IL.RoR2.CharacterBody.RecalculateStats += RecalculateStats;
         IL.EntityStates.BrotherMonster.BaseSlideState.OnEnter += BaseSlideState_OnEnter;
         IL.EntityStates.BrotherMonster.BaseSlideState.AttemptFireHomingBombAuthority += BaseSlideState_AttemptFireHomingBombAuthority;
         IL.EntityStates.BrotherMonster.BaseSlideState.AttemptFireCrystalsAuthority += BaseSlideState_AttemptFireCrystalsAuthority;
         IL.RoR2.BrotherSuperArmorController.OnDamageDealtServer += BrotherSuperArmorController_OnDamageDealtServer;
+
+        AssetAsyncReferenceManager<GameObject>.LoadAsset(new AssetReferenceT<GameObject>(RoR2_Base_Brother.BrotherGravityWell_prefab)).Completed += (x) => 
+        {
+            // if (x.Result.TryGetComponent(out CharacterBodyDisplacementProvider characterBodyDisplacementProvider))
+            // {
+            //     characterBodyDisplacementProvider.pullMagnitudeCurve
+            // }
+        };
     }
 
-    private void BrotherSuperArmorController_OnDamageDealtServer(ILContext il)
+    private static void BrotherSuperArmorController_OnDamageDealtServer(ILContext il)
     {
         ILCursor c = new(il);
 
@@ -34,7 +48,7 @@ public class KarmicChanges
         }
     }
 
-    private void BaseSlideState_AttemptFireCrystalsAuthority(ILContext il)
+    private static void BaseSlideState_AttemptFireCrystalsAuthority(ILContext il)
     {
         ILCursor c = new(il);
         ILLabel l = null;
@@ -58,7 +72,7 @@ public class KarmicChanges
         }
     }
 
-    private void BaseSlideState_AttemptFireHomingBombAuthority(ILContext il)
+    private static void BaseSlideState_AttemptFireHomingBombAuthority(ILContext il)
     {
         ILCursor c = new(il);
 
@@ -113,7 +127,7 @@ public class KarmicChanges
         }
     }
 
-    private void RecalculateStats(ILContext il)
+    private static void RecalculateStats(ILContext il)
     {
         int karmaLevelLoc = GetKarmaLevelLoc(il);
 

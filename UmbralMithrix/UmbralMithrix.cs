@@ -12,8 +12,10 @@ using RoR2.CharacterAI;
 using RoR2.ContentManagement;
 using RoR2.Projectile;
 using RoR2.Skills;
+using ShaderSwapper;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UmbralMithrix.Components;
@@ -43,6 +45,8 @@ namespace UmbralMithrix
         public const string PluginVersion = "2.5.25";
 
         internal static UmbralMithrix Instance { get; private set; }
+
+        public static AssetBundle Bundle;
 
         public static bool RooInstalled => Chainloader.PluginInfos.ContainsKey("com.rune580.riskofoptions");
         public static Dictionary<int, Vector3> p23PizzaPoints = new Dictionary<int, Vector3>()
@@ -119,6 +123,9 @@ namespace UmbralMithrix
             Log.Init(Logger);
 
             ModConfig.Init();
+
+            Bundle = AssetBundle.LoadFromFile(GetModBundlePath(Assembly.GetExecutingAssembly(), "umbralassets"));
+            base.StartCoroutine(Bundle.UpgradeStubbedShadersAsync());
 
             LoadAssets();
             CloneAssets();
@@ -582,6 +589,15 @@ namespace UmbralMithrix
                     break;
                 }
             }
+        }
+
+        public static string GetModBundlePath(Assembly assembly, string bundleName)
+        {
+            string path = System.IO.Path.GetDirectoryName(assembly.Location);
+            string[] files = Directory.GetFiles(path, bundleName + "*", SearchOption.AllDirectories);
+            if (files.Length == 0)
+                Log.Error(path + " <" + bundleName + ">: path doesn't exist");
+            return files[0];
         }
     }
 }

@@ -9,7 +9,7 @@
   <PropertyGroup>
     <BuildDir>$(SolutionDir)/Thunderstore/</BuildDir>
     <TSPackageDir>$(BuildDir)/package/</TSPackageDir>
-    <TSPackagePluginDir>$(TSPackageDir)/plugins/$(SolutionName)/</TSPackagePluginDir>
+    <TSPackagePluginDir>$(TSPackageDir)/plugins/</TSPackagePluginDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,12 +23,13 @@
     <PackageReference Include="RiskOfRain2.GameLibs" Version="*-*" GeneratePathProperty="true"/>
     <PackageReference Include="MMHOOK.RoR2" Version="*" NoWarn="NU1701" />
     <PackageReference Include="RoR2BepInExPack" Version="*" Publicize="true" />
-    <PackageReference Include="UnityEngine.Modules" Version="2021.3.33" GeneratePathProperty="true" />
+    <PackageReference Include="UnityEngine.Modules" Version="2021.3.45" GeneratePathProperty="true" />
     <PackageReference Include="R2API.Core" Version="5.3.0" />
     <PackageReference Include="R2API.ContentManagement" Version="1.0.11" />
     <PackageReference Include="R2API.Prefab" Version="1.1.1" />
     <PackageReference Include="R2API.Language" Version="1.1.0" />
     <PackageReference Include="score-MiscFixes" Version="1.5.9" />
+    <PackageReference Include="Smooth_Salad-ShaderSwapper" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

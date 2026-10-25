@@ -1,6 +1,6 @@
 ﻿{
   "name": "Nuxlars_UmbralMithrix",
-  "version_number": "2.5.25",
+  "version_number": "2.5.27",
   "website_url": "https://github.com/Tizitendo/UmbralMithrix",
   "description": "A reworked Mithrix fight that uses new mechanics. Configurable.",
   "dependencies": [

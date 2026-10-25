@@ -1,6 +1,5 @@
 using System;
 using EntityStates.BrotherMonster;
-using EntityStates.BrotherMonster.Weapon.LunarGolem;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using R2API.Utils;
@@ -26,7 +25,6 @@ public class KarmicChanges
 
         AssetAsyncReferenceManager<GameObject>.LoadAsset(new AssetReferenceT<GameObject>(RoR2_Base_Brother.BrotherGravityWell_prefab)).Completed += (x) => 
         {
-            Log.Info("ttttttttttttttttttttttttttttttt");
             if (x.Result.TryGetComponent(out CharacterBodyDisplacementProvider characterBodyDisplacementProvider))
             {
                 GameObject.Destroy(characterBodyDisplacementProvider);
@@ -121,12 +119,6 @@ public class KarmicChanges
 
         static bool applyForceImmunity(BaseSlideState self)
         {
-            if (!self.characterBody)
-                return false;
-            if (BrotherKarmaUtils.IsBrotherStrict(self.characterBody))
-            {
-                return true;
-            }
             return false;
         }
     }

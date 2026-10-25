@@ -25,6 +25,10 @@ MonoBehaviour:
     m_Address: Assets/Assets/Objects/PullController.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: e2b46af89b33ba516b5bcfe8c62d93c9
+    m_Address: Assets/Assets/Materials/matSunderWaveNew.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 16d5b58ebccdf78d984c5a37d4deefac, type: 2}
   m_SchemaSet:

@@ -94,5 +94,5 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   durationOfMaxPull: 1.5
-  distanceForMaxPull: 100
+  distanceForMaxPull: 150
   invertTeamFilter: 0

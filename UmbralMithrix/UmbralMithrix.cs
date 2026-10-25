@@ -12,6 +12,7 @@ using RoR2.CharacterAI;
 using RoR2.ContentManagement;
 using RoR2.Projectile;
 using RoR2.Skills;
+using RoR2BepInExPack.GameAssetPathsBetter;
 using ShaderSwapper;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace UmbralMithrix
         public const string PluginGUID = "com." + PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Nuxlar";
         public const string PluginName = "UmbralMithrix";
-        public const string PluginVersion = "2.5.25";
+        public const string PluginVersion = "2.5.27";
 
         internal static UmbralMithrix Instance { get; private set; }
 
@@ -368,6 +369,11 @@ namespace UmbralMithrix
                     }
                 }
 
+                if (mithrixHurtP3.TryGetComponent(out BrotherSuperArmorController brotherSuperArmorController))
+                {
+                    brotherSuperArmorController.healthThreshold = 0.2f;
+                }
+
                 characterBody.baseNameToken = "UMBRALMITHRIX_UMBRAL_BODY_NAME";
                 characterBody.subtitleNameToken = "UMBRALMITHRIX_UMBRAL_BODY_SUBTITLE";
 
@@ -498,6 +504,12 @@ namespace UmbralMithrix
             AssetAsyncReferenceManager<GameObject>.LoadAsset(bodyRef).Completed += (x) =>
             {
                 mithrix = x.Result;
+
+                if (mithrix.TryGetComponent(out BrotherSuperArmorController brotherSuperArmorController))
+                {
+                    brotherSuperArmorController.healthThreshold = 0.2f;
+                }
+
                 CharacterBody characterBody = mithrix.GetComponent<CharacterBody>();
                 CharacterDirection characterDirection = mithrix.GetComponent<CharacterDirection>();
                 CharacterMotor characterMotor = mithrix.GetComponent<CharacterMotor>();
@@ -543,6 +555,21 @@ namespace UmbralMithrix
                 component7.lookRange = ModConfig.ShardRange.Value;
                 component7.lookCone = ModConfig.ShardCone.Value;
                 component7.allowTargetLoss = true;
+            };
+            AssetAsyncReferenceManager<GameObject>.LoadAsset(new AssetReferenceT<GameObject>(RoR2_Base_Brother.BrotherSunderWaveGhost_prefab)).Completed += (x) =>
+            {
+                Transform waveParticles = x.Result.transform.Find("Size Parent/Infection, World");
+                if (waveParticles.TryGetComponent(out ParticleSystemRenderer particleSystemRenderer))
+                {
+                    particleSystemRenderer.material = UmbralMithrix.Bundle.LoadAsset<Material>("Assets/Assets/Materials/matSunderWaveNew.mat");
+                }
+                if (waveParticles.TryGetComponent(out ParticleSystem particleSystem))
+                {
+                    ParticleSystem.MainModule main = particleSystem.main;
+                    main.maxParticles = 30;
+                    ParticleSystem.EmissionModule emission = particleSystem.emission;
+                    emission.rateOverTimeMultiplier = 200;
+                }
             };
 
             AssetReferenceT<GameObject> crystalRef = new AssetReferenceT<GameObject>(RoR2BepInExPack.GameAssetPathsBetter.RoR2_Base_WeeklyRun.TimeCrystalBody_prefab);

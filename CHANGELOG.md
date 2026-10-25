@@ -1,3 +1,15 @@
+`2.5.27`
+
+- Fixed Temporary clones using the slam attack and firing lunar shards
+- Improved visibility of temporary clones
+- Improved visibility of shockwaves
+- Reworked black hole pull to get stronger the further you are away
+- Removed knockback immunity gained after dashing from karma 4
+
+`2.5.26`
+
+- Reduced Karma 1 shield to every 20% maxhp
+
 `2.5.25`
 
 - Changed the umbral clones to the unused karma clones model

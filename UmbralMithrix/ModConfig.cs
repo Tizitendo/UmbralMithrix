@@ -286,7 +286,7 @@ namespace UmbralMithrix
                 "Karma",
                 "Karma 1",
                 true,
-                "Default: Enabled\n- Gain super armor every 10% of health lost", false);
+                "Default: Enabled\n- Gain super armor every 20% of health lost", false);
             Karma2 = UMConfig.BindOption(
                 "Karma",
                 "Karma 2",

@@ -38,8 +38,8 @@ namespace UmbralMithrix
         private bool PhysicsProjectileBehavior_canSpawnAlly(On.RoR2.Items.PhysicsProjectileBehavior.orig_canSpawnAlly orig, RoR2.Items.PhysicsProjectileBehavior self)
         {
             return orig(self) && 
-            PhaseCounter.instance && PhaseCounter.instance.phase != 4 && 
-            UmbralMissionController.instance;
+            (!PhaseCounter.instance || PhaseCounter.instance.phase != 4 || 
+            !UmbralMissionController.instance);
         }
 
         private bool ItemStealController_BrotherItemFilter(On.RoR2.ItemStealController.orig_BrotherItemFilter orig, ItemIndex itemIndex)

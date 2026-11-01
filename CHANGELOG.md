@@ -1,3 +1,10 @@
+`2.5.28`
+
+- Fixed best buddy :)
+- Phase 1 spawn in can now spawn karmic spires
+- Can now spawn karmic spires after each pizza attack
+- Added options for karma 4 and 5
+
 `2.5.27`
 
 - Fixed Temporary clones using the slam attack and firing lunar shards

@@ -50,6 +50,8 @@ namespace UmbralMithrix
         public static ConfigEntry<bool> Karma1;
         public static ConfigEntry<bool> Karma2;
         public static ConfigEntry<bool> Karma3;
+        public static ConfigEntry<bool> Karma4;
+        public static ConfigEntry<bool> Karma5;
         public static ConfigEntry<bool> Karma8;
 
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
@@ -297,6 +299,16 @@ namespace UmbralMithrix
                 "Karma 3",
                 true,
                 "Default: Enabled\n- Create crystals on swipe\n- Create circling lasers on slam", false);
+            Karma4 = UMConfig.BindOption(
+                "Karma",
+                "Karma 4",
+                true,
+                "Default: Enabled\n- Orbs from fistslam gain a spike trail", false);
+            Karma5 = UMConfig.BindOption(
+                "Karma",
+                "Karma 5",
+                true,
+                "Default: Enabled\n- Summon spires on phase start and after each pizza attack", false);
             Karma8 = UMConfig.BindOption(
                 "Karma",
                 "Karma 8",

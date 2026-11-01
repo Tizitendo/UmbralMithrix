@@ -43,7 +43,7 @@ namespace UmbralMithrix
         public const string PluginGUID = "com." + PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Nuxlar";
         public const string PluginName = "UmbralMithrix";
-        public const string PluginVersion = "2.5.27";
+        public const string PluginVersion = "2.5.28";
 
         internal static UmbralMithrix Instance { get; private set; }
 
@@ -69,6 +69,7 @@ namespace UmbralMithrix
                 new Vector3(-196f, 489.7f, -101f)
             }
         };
+        public static Vector3 arenaCenter = new Vector3(-88, 495, 0);
         public static ItemDef UmbralItem;
 
         public static GameObject umbralSlamImpact;
